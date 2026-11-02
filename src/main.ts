@@ -1,15 +1,24 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule} from './app.module.js';
+import { AppModule } from './app.module.js';
+import { setupSwagger } from './config/swagger.config.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global API Prefix: /api/v1
+  // 1. Security & CORS configuration
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
+  // 2. Global API Versioning/Prefix
   app.setGlobalPrefix('api/v1');
 
-  // Global DTO Validation
+  // 3. Graceful Shutdown Hooks (Closes Prisma & DB connections cleanly on SIGTERM)
+  app.enableShutdownHooks();
+
+  // 4. Global Validation Pipeline
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -18,17 +27,16 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger Documentation Setup
-  const config = new DocumentBuilder()
-    .setTitle('User Management API')
-    .setDescription('NestJS User API with Swagger and DTO Validation')
-    .setVersion('1.0')
-    .addTag('Users')
-    .build();
+  // 5. Centralized Swagger Documentation
+  setupSwagger(app);
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  // 6. Start Server
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
 
-  await app.listen(process.env.PORT ?? 3000);
+  const logger = new Logger('Bootstrap');
+  logger.log(`🚀 Application running at: http://localhost:${port}/api/v1`);
+  logger.log(`📚 Swagger docs available at: http://localhost:${port}/docs`);
 }
+
 await bootstrap();
