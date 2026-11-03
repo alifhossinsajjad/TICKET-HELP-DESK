@@ -13,8 +13,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // 2. Global API Versioning/Prefix
-  app.setGlobalPrefix('api/v1');
+  // 2. Global API Versioning/Prefix (excluding root and health check)
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['/', 'health'],
+  });
 
   // 3. Graceful Shutdown Hooks (Closes Prisma & DB connections cleanly on SIGTERM)
   app.enableShutdownHooks();
