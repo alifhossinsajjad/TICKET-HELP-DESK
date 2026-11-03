@@ -73,7 +73,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const TicketScalarFieldEnum = {
   id: 'id',
-  title: 'title',
+  subject: 'subject',
   description: 'description',
   status: 'status',
   priority: 'priority',
@@ -111,12 +111,4 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

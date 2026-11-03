@@ -36,7 +36,7 @@ async function main() {
   // 3. Create Sample Ticket
   await prisma.ticket.create({
     data: {
-      title: 'Server connection timeout',
+      subject: 'Server connection timeout',
       description: 'Unable to connect to production database cluster.',
       status: 'OPEN',
       priority: 'HIGH',

@@ -1,7 +1,6 @@
 enum TicketStatus {
   OPEN
   IN_PROGRESS
-  RESOLVED
   CLOSED
 }
 
@@ -9,13 +8,12 @@ enum TicketPriority {
   LOW
   MEDIUM
   HIGH
-  URGENT
 }
 
 model Ticket {
-  id          Int            @id @default(autoincrement())
-  title       String
-  description String?
+  id          String         @id @default(uuid())
+  subject     String
+  description String
   status      TicketStatus   @default(OPEN)
   priority    TicketPriority @default(MEDIUM)
   createdAt   DateTime       @default(now())
@@ -24,6 +22,9 @@ model Ticket {
   userId      Int
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([status])
+  @@index([priority])
+  @@index([userId])
+  @@index([createdAt])
   @@map("tickets")
 }
-
